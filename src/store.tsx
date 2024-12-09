@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit'
 
 import storage from 'redux-persist/lib/storage'
 import { persistReducer, persistStore } from 'redux-persist'
+import { counterSlice } from './feature/counter/counterSlice'
 
 const persistConfig = {
   key: 'root',
@@ -9,13 +10,18 @@ const persistConfig = {
 }
 
 const rootReducer = combineReducers({
-  // your reducers here
+    counter: counterSlice.reducer,
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 export const store = configureStore({
   reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+    },
+  }),
 })
 
 export const persistor = persistStore(store)
